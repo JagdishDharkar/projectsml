@@ -5,6 +5,7 @@ from src.mlproject.logger import logging
 import pandas as pd
 import pymysql
 from dotenv import load_dotenv
+import pickle
 
 # Load environment variables from .env file
 load_dotenv()
@@ -25,7 +26,7 @@ def read_sql_data():
             password=password,
             db=db
         )
-        logging.info("Connection Established", mydb)
+        logging.info("Connection Established: %s", mydb)
 
         # Execute a SQL query to retrieve data from the "students" table
         query = 'SELECT * FROM students'
@@ -39,4 +40,14 @@ def read_sql_data():
     except Exception as ex:
         raise CustomException(ex)
 
-# Usage: Call read_sql_data() to retrieve data from the MySQL database
+def save_object(file_path, obj):
+    try:
+        dir_path = os.path.dirname(file_path)
+
+        os.makedirs(dir_path, exist_ok=True)
+
+        with open(file_path, "wb") as file_obj:
+            pickle.dump(obj, file_obj)
+
+    except Exception as e:
+        raise CustomException(e, sys)
